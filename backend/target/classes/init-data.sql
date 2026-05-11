@@ -1,0 +1,2 @@
+-- Les données sont créées via la classe DataInitializer.java
+-- Ce fichier est conservé pour compatibilité mais reste vide
