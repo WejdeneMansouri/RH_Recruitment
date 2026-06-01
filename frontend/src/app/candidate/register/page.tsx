@@ -13,25 +13,32 @@ export default function CandidateRegisterPage() {
   const [address, setAddress] = useState('');
   const [skills, setSkills] = useState('');
   const [experienceYears, setExperienceYears] = useState(0);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [error, setError] = useState('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
 
-    const response = await fetch('http://localhost:8082/api/auth/register', {
+    if (!resumeFile) {
+      setError('Le CV est obligatoire pour finaliser l’inscription.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('name', name);
+    formData.append('role', 'Candidate');
+    formData.append('phone', phone);
+    formData.append('address', address);
+    formData.append('skills', skills);
+    formData.append('experienceYears', experienceYears.toString());
+    formData.append('resume', resumeFile);
+
+    const response = await fetch('http://localhost:8082/api/auth/register-with-cv', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        password,
-        name,
-        role: 'Candidate',
-        phone,
-        address,
-        skills,
-        experienceYears,
-      }),
+      body: formData,
     });
 
     if (!response.ok) {
@@ -117,6 +124,17 @@ export default function CandidateRegisterPage() {
               onChange={(e) => setExperienceYears(Number(e.target.value))}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
+          </label>
+          <label className="block">
+            <span className="text-sm font-medium text-gray-700">CV</span>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
+              required
+              className="mt-1 block w-full text-sm text-gray-700"
+            />
+            <span className="text-xs text-gray-500">Formats acceptés : PDF, DOC, DOCX, TXT.</span>
           </label>
           {error && <div className="text-red-600 text-sm">{error}</div>}
           <button

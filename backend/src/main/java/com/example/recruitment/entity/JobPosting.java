@@ -16,6 +16,10 @@ public class JobPosting {
     @Column(length = 2000)
     private String requirements;
     private String status; // Open, Closed
+    private LocalDateTime deadline;
+
+    @Transient
+    private Double matchScore;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "created_by")
@@ -63,6 +67,22 @@ public class JobPosting {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+
+    public Double getMatchScore() {
+        return matchScore;
+    }
+
+    public void setMatchScore(Double matchScore) {
+        this.matchScore = matchScore;
     }
 
     public User getCreatedBy() {

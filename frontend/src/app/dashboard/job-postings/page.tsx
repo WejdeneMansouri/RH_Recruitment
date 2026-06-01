@@ -11,6 +11,7 @@ interface JobPosting {
   requirements: string;
   status: string;
   createdAt: string;
+  deadline?: string;
 }
 
 interface UserData {
@@ -131,7 +132,7 @@ export default function JobPostingsPage() {
                         <div className="flex-1">
                           <h3 className="text-lg font-medium text-gray-900">{job.title}</h3>
                           <p className="mt-1 text-sm text-gray-600 line-clamp-2">{job.description}</p>
-                          <div className="mt-2 flex items-center space-x-4">
+                          <div className="mt-2 flex flex-wrap items-center gap-4">
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                               job.status === 'Open' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                             }`}>
@@ -140,6 +141,11 @@ export default function JobPostingsPage() {
                             <span className="text-sm text-gray-500">
                               Créé le {new Date(job.createdAt).toLocaleDateString('fr-FR')}
                             </span>
+                            {job.deadline && (
+                              <span className="text-sm text-blue-600">
+                                Date limite : {new Date(job.deadline).toLocaleDateString('fr-FR')}
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="flex space-x-2">

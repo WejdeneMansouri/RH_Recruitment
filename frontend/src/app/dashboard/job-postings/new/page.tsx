@@ -10,7 +10,8 @@ export default function NewJobPostingPage() {
     title: '',
     description: '',
     requirements: '',
-    status: 'Open'
+    status: 'Open',
+    deadline: ''
   });
   const [loading, setLoading] = useState(false);
 
@@ -26,6 +27,7 @@ export default function NewJobPostingPage() {
     setLoading(true);
 
     try {
+      const deadlineIso = formData.deadline ? new Date(formData.deadline).toISOString() : null;
       const response = await fetch('http://localhost:8082/api/job-postings', {
         method: 'POST',
         headers: {
@@ -33,6 +35,7 @@ export default function NewJobPostingPage() {
         },
         body: JSON.stringify({
           ...formData,
+          deadline: deadlineIso,
           createdAt: new Date().toISOString()
         }),
       });
@@ -124,6 +127,21 @@ export default function NewJobPostingPage() {
                 onChange={handleChange}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Liste des compétences, expérience requise, diplômes..."
+              />
+            </div>
+
+            <div>
+              <label htmlFor="deadline" className="block text-sm font-medium text-gray-700">
+                Date limite de candidature
+              </label>
+              <input
+                type="datetime-local"
+                name="deadline"
+                id="deadline"
+                required
+                value={formData.deadline}
+                onChange={handleChange}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 

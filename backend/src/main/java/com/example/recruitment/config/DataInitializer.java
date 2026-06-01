@@ -66,6 +66,7 @@ public class DataInitializer {
         job1.setDescription("Nous recherchons un développeur Full Stack expérimenté avec React et Spring Boot.");
         job1.setRequirements("Java, React, SQL, Git");
         job1.setStatus("Open");
+        job1.setDeadline(LocalDateTime.now().plusDays(20));
         job1.setCreatedBy(adminUser);
         job1.setCreatedAt(LocalDateTime.now());
         jobPostingRepository.save(job1);
@@ -75,6 +76,7 @@ public class DataInitializer {
         job2.setDescription("Rejoignez notre équipe data pour des projets d'apprentissage automatique.");
         job2.setRequirements("Python, SQL, Machine Learning, Pandas");
         job2.setStatus("Open");
+        job2.setDeadline(LocalDateTime.now().plusDays(15));
         job2.setCreatedBy(adminUser);
         job2.setCreatedAt(LocalDateTime.now());
         jobPostingRepository.save(job2);
@@ -84,6 +86,7 @@ public class DataInitializer {
         job3.setDescription("Management de projets informatiques en environnement Agile.");
         job3.setRequirements("Agile, Scrum, Jira, Leadership");
         job3.setStatus("Open");
+        job3.setDeadline(LocalDateTime.now().plusDays(30));
         job3.setCreatedBy(adminUser);
         job3.setCreatedAt(LocalDateTime.now());
         jobPostingRepository.save(job3);

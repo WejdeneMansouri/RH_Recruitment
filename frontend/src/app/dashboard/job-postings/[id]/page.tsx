@@ -11,6 +11,7 @@ interface JobPosting {
   requirements: string;
   status: string;
   createdAt: string;
+  deadline?: string;
   createdBy?: {
     id: number;
     name: string;
@@ -160,6 +161,11 @@ export default function JobPostingDetailPage() {
                 <span className="text-gray-600 text-sm">
                   Créée le {new Date(job.createdAt).toLocaleDateString('fr-FR')}
                 </span>
+                {job.deadline && (
+                  <span className="text-sm text-blue-600">
+                    Date limite : {new Date(job.deadline).toLocaleDateString('fr-FR')} {new Date(job.deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
               </div>
             </div>
             <button

@@ -72,6 +72,17 @@ public class Application {
         this.notes = notes;
     }
 
+    @Column(name = "interview_date")
+    private LocalDateTime interviewDate;
+
+    public LocalDateTime getInterviewDate() {
+        return interviewDate;
+    }
+
+    public void setInterviewDate(LocalDateTime interviewDate) {
+        this.interviewDate = interviewDate;
+    }
+
     @Column(name = "match_score")
     private Double matchScore;
 

@@ -11,6 +11,8 @@ interface JobPosting {
   requirements: string;
   status: string;
   createdAt: string;
+  deadline?: string;
+  matchScore?: number;
 }
 
 interface UserData {
@@ -40,16 +42,33 @@ export default function CandidateJobPostingsPage() {
       return;
     }
     setUser(parsed);
-    fetchOpenJobs();
+    fetchOpenJobs(parsed.candidateId);
   }, [router]);
 
-  const fetchOpenJobs = async () => {
+  const fetchOpenJobs = async (candidateId: number) => {
     try {
-      const response = await fetch('http://localhost:8082/api/job-postings/open');
+      const response = await fetch(`http://localhost:8082/api/candidates/${candidateId}/matches`);
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Error fetching job postings:', response.status, text);
+        setMessage('Impossible de récupérer les offres compatibles.');
+        setJobs([]);
+        return;
+      }
+
       const data = await response.json();
+      if (!Array.isArray(data)) {
+        console.error('Unexpected jobs payload:', data);
+        setMessage('Réponse inattendue du serveur pour les offres.');
+        setJobs([]);
+        return;
+      }
+
       setJobs(data);
     } catch (error) {
       console.error('Error fetching job postings:', error);
+      setMessage('Erreur lors de la récupération des offres.');
+      setJobs([]);
     } finally {
       setLoading(false);
     }
@@ -69,7 +88,8 @@ export default function CandidateJobPostingsPage() {
       });
 
       if (!response.ok) {
-        setMessage('Impossible de postuler pour cette offre.');
+        const text = await response.text();
+        setMessage(text || 'Impossible de postuler pour cette offre.');
         return;
       }
 
@@ -120,6 +140,16 @@ export default function CandidateJobPostingsPage() {
                     <h2 className="text-2xl font-semibold text-gray-900">{job.title}</h2>
                     <p className="mt-2 text-gray-600">{job.description}</p>
                     <p className="mt-4 text-sm text-gray-500">Compétences requises : {job.requirements}</p>
+                    {job.deadline && (
+                      <p className="mt-2 text-sm text-gray-500">
+                        Date limite de candidature : {new Date(job.deadline).toLocaleDateString('fr-FR')} {new Date(job.deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    )}
+                    {typeof job.matchScore === 'number' && (
+                      <p className="mt-2 text-sm font-semibold text-green-700">
+                        Score de correspondance estimé : {Math.round(job.matchScore * 100)}%
+                      </p>
+                    )}
                   </div>
                   <button
                     onClick={() => applyForJob(job.id)}

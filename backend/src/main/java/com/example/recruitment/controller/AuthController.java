@@ -5,9 +5,18 @@ import com.example.recruitment.entity.User;
 import com.example.recruitment.repository.CandidateRepository;
 import com.example.recruitment.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import com.example.recruitment.util.PasswordUtil;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 
 @RestController
@@ -72,6 +81,66 @@ public class AuthController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/register-with-cv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerWithCv(
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("name") String name,
+            @RequestParam(value = "role", required = false) String role,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "skills", required = false) String skills,
+            @RequestParam(value = "experienceYears", required = false) Integer experienceYears,
+            @RequestPart("resume") MultipartFile resume
+    ) {
+        if (userRepository.findByEmail(email) != null) {
+            return ResponseEntity.badRequest().body("Un utilisateur avec cet email existe déjà.");
+        }
+
+        if (resume == null || resume.isEmpty()) {
+            return ResponseEntity.badRequest().body("Le CV est obligatoire.");
+        }
+
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(PasswordUtil.hashPassword(password));
+        user.setName(name);
+        user.setRole(role != null ? role : "Candidate");
+        user.setCreatedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        if ("Candidate".equalsIgnoreCase(user.getRole())) {
+            Candidate candidate = new Candidate();
+            candidate.setName(name);
+            candidate.setEmail(email);
+            candidate.setPhone(phone);
+            candidate.setAddress(address);
+            candidate.setSkills(skills);
+            candidate.setExperienceYears(experienceYears);
+            candidate.setCreatedAt(LocalDateTime.now());
+            candidate.setResumePath(saveResumeFile(resume, email));
+            candidateRepository.save(candidate);
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    private String saveResumeFile(MultipartFile resume, String userEmail) {
+        try {
+            String uploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "resumes";
+            Path uploadPath = Paths.get(uploadDir);
+            Files.createDirectories(uploadPath);
+            String originalFilename = resume.getOriginalFilename() != null ? resume.getOriginalFilename() : "resume";
+            String safeName = userEmail.replaceAll("[^a-zA-Z0-9.-]", "_");
+            String filename = safeName + "_" + System.currentTimeMillis() + "_" + originalFilename;
+            Path filePath = uploadPath.resolve(filename);
+            Files.copy(resume.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            return filePath.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Impossible de sauvegarder le CV", e);
+        }
     }
 
     // --- Data Transfer Objects (DTOs) ---

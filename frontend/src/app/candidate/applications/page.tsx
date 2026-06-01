@@ -16,6 +16,7 @@ interface Application {
   id: number;
   status: string;
   appliedDate: string;
+  interviewDate?: string;
   matchScore?: number;
   jobPosting: {
     title: string;
@@ -56,6 +57,14 @@ export default function CandidateApplicationsPage() {
     }
   };
 
+  const statusLabels: { [key: string]: string } = {
+    pending: 'En attente',
+    in_review: 'En cours d’examen',
+    rejected: 'Refusé',
+    interviewed: 'Entretien programmé',
+    hired: 'Embauché',
+  };
+
   if (!user) {
     return <div className="min-h-screen bg-slate-50" />;
   }
@@ -87,9 +96,12 @@ export default function CandidateApplicationsPage() {
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-1">
                     <p className="text-sm text-gray-500">Offre : <span className="font-semibold text-gray-900">{application.jobPosting.title}</span></p>
-                    <p className="text-sm text-gray-500">Statut : <span className="font-semibold">{application.status}</span></p>
+                    <p className="text-sm text-gray-500">Statut : <span className="font-semibold">{statusLabels[application.status] || application.status}</span></p>
                   </div>
                   <p className="text-sm text-gray-500">Posté le {new Date(application.appliedDate).toLocaleDateString('fr-FR')}</p>
+                  {application.interviewDate && (
+                    <p className="text-sm text-green-700">Entretien programmé le {new Date(application.interviewDate).toLocaleDateString('fr-FR')} à {new Date(application.interviewDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p>
+                  )}
                   {typeof application.matchScore === 'number' && (
                     <p className="text-sm text-blue-700">Score de correspondance : {Math.round(application.matchScore * 100)}%</p>
                   )}
