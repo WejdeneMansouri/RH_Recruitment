@@ -70,11 +70,10 @@ export default function EditJobPostingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl bg-white p-8 rounded shadow">
-        <h1 className="text-2xl font-bold mb-4">Modifier l'offre</h1>
-        {error && <div className="mb-4 text-red-600">{error}</div>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-3xl mx-auto bg-white p-8 rounded shadow">
+      <h1 className="text-2xl font-bold mb-4">Modifier l'offre</h1>
+      {error && <div className="mb-4 text-red-600">{error}</div>}
+      <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Titre</label>
             <input value={title} onChange={(e) => setTitle(e.target.value)} required className="mt-1 block w-full rounded border-gray-300" />
@@ -103,6 +102,5 @@ export default function EditJobPostingPage() {
           </div>
         </form>
       </div>
-    </div>
   );
 }

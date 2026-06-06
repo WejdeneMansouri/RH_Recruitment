@@ -6,6 +6,7 @@ import com.example.recruitment.entity.JobPosting;
 import com.example.recruitment.repository.ApplicationRepository;
 import com.example.recruitment.repository.CandidateRepository;
 import com.example.recruitment.repository.JobPostingRepository;
+import com.example.recruitment.util.MatchScoreUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/candidates")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:3001" })
 public class CandidateController {
 
     @Autowired
@@ -127,7 +128,7 @@ public class CandidateController {
             if (appliedJobIds.contains(job.getId())) {
                 continue;
             }
-            double score = computeMatchScore(candidateTerms, job.getRequirements());
+            double score = MatchScoreUtil.computeMatchScore(candidateTerms, job.getRequirements());
             if (score > 0) {
                 job.setMatchScore(score);
                 matches.add(job);
@@ -179,29 +180,11 @@ public class CandidateController {
     }
 
     private double computeMatchScore(Set<String> candidateTerms, String requirements) {
-        if (requirements == null || requirements.isBlank() || candidateTerms.isEmpty()) {
-            return 0.0;
-        }
-
-        Set<String> requiredTerms = parseTerms(requirements);
-        if (requiredTerms.isEmpty()) {
-            return 0.0;
-        }
-
-        long matches = candidateTerms.stream().filter(requiredTerms::contains).count();
-        return Math.min(1.0, (double) matches / requiredTerms.size());
+        return MatchScoreUtil.computeMatchScore(candidateTerms, requirements);
     }
 
     private Set<String> parseTerms(String text) {
-        if (text == null || text.isBlank()) {
-            return Collections.emptySet();
-        }
-
-        return Arrays.stream(text.split("[,;\\n\\s]+"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(s -> s.toLowerCase(Locale.ROOT))
-                .collect(Collectors.toSet());
+        return MatchScoreUtil.parseTerms(text);
     }
 
     @PutMapping("/{id}")

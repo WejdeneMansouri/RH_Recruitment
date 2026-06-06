@@ -1,12 +1,15 @@
+com\example\recruitment\dto\ReportDto$MonthCount.class
 com\example\recruitment\controller\CandidateController.class
 com\example\recruitment\controller\AuthController$RegisterRequest.class
 com\example\recruitment\repository\JobPostingRepository.class
 com\example\recruitment\config\DataInitializer.class
 com\example\recruitment\config\WebConfig$1.class
+com\example\recruitment\controller\ReportController.class
 com\example\recruitment\entity\RecruitmentStep.class
 com\example\recruitment\controller\JobPostingController.class
 com\example\recruitment\repository\UserRepository.class
 com\example\recruitment\repository\ApplicationRepository.class
+com\example\recruitment\dto\ReportDto$SkillCount.class
 com\example\recruitment\config\SecurityConfig.class
 com\example\recruitment\entity\Application.class
 com\example\recruitment\RecruitmentApplication.class
@@ -16,6 +19,7 @@ com\example\recruitment\entity\Candidate.class
 com\example\recruitment\controller\AuthController$LoginRequest.class
 com\example\recruitment\controller\ApplicationController.class
 com\example\recruitment\controller\AuthController.class
+com\example\recruitment\dto\ReportDto.class
 com\example\recruitment\entity\Communication.class
 com\example\recruitment\entity\JobPosting.class
 com\example\recruitment\util\PasswordUtil.class

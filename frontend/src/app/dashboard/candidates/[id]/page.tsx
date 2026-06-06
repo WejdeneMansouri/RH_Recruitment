@@ -23,10 +23,25 @@ export default function CandidateDetailPage() {
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isOwnCandidate, setIsOwnCandidate] = useState(false);
 
   useEffect(() => {
     if (id) {
       fetchCandidate();
+    }
+
+    // Determine whether the logged-in user is the candidate themselves
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('recruitmentUser') : null;
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        // parsed may contain candidateId when login as candidate
+        if (parsed.role === 'Candidate' && parsed.candidateId) {
+          setIsOwnCandidate(Number(parsed.candidateId) === Number(id));
+        }
+      } catch (e) {
+        console.error('Error parsing user data');
+      }
     }
   }, [id]);
 
@@ -47,28 +62,14 @@ export default function CandidateDetailPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-100 p-8">Chargement du candidat…</div>;
+    return <div className="px-4 py-6 sm:px-0">Chargement du candidat…</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16 items-center">
-            <div className="text-xl font-bold text-gray-800">Recruitment Management</div>
-            <div className="flex gap-4">
-              <Link href="/dashboard" className="text-gray-700 hover:text-blue-600">Dashboard</Link>
-              <Link href="/dashboard/job-postings" className="text-gray-700 hover:text-blue-600">Offres</Link>
-              <Link href="/dashboard/candidates" className="text-blue-600 hover:text-blue-800">Candidats</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-5xl mx-auto py-8 px-4">
-        <Link href="/dashboard/candidates" className="text-blue-600 hover:text-blue-800">
-          ← Retour à la liste des candidats
-        </Link>
+    <div className="px-4 py-6 sm:px-0">
+      <Link href="/dashboard/candidates" className="text-blue-600 hover:text-blue-800">
+        ← Retour à la liste des candidats
+      </Link>
 
         <div className="mt-8 rounded-3xl bg-white p-8 shadow-sm">
           {error ? (
@@ -81,9 +82,11 @@ export default function CandidateDetailPage() {
                   <p className="text-gray-600 mt-2">Candidat inscrit le {new Date(candidate.createdAt).toLocaleDateString('fr-FR')}</p>
                 </div>
                 <div className="text-right">
-                  <Link href={`/dashboard/candidates/${candidate.id}/edit`} className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700">
-                    Modifier
-                  </Link>
+                  {isOwnCandidate ? (
+                    <Link href="/candidate/profile" className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700">
+                      Modifier
+                    </Link>
+                  ) : null}
                 </div>
               </div>
 
@@ -135,7 +138,6 @@ export default function CandidateDetailPage() {
             <p className="text-gray-600">Candidat introuvable.</p>
           )}
         </div>
-      </main>
-    </div>
+      </div>
   );
 }

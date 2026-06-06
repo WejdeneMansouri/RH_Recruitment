@@ -53,26 +53,12 @@ export default function NewJobPostingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/dashboard" className="text-xl font-bold text-gray-800">Recruitment Management</Link>
-            </div>
-            <div className="flex space-x-4">
-              <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 px-3 py-2">Dashboard</Link>
-              <Link href="/dashboard/job-postings" className="text-blue-600 font-medium px-3 py-2">Offres</Link>
-              <Link href="/dashboard/candidates" className="text-gray-700 hover:text-blue-600 px-3 py-2">Candidats</Link>
-              <Link href="/dashboard/applications" className="text-gray-700 hover:text-blue-600 px-3 py-2">Candidatures</Link>
-              <Link href="/dashboard/reports" className="text-gray-700 hover:text-blue-600 px-3 py-2">Rapports</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
+    <div className="px-4 py-6 sm:px-0">
+      <div className="mb-6">
+        <Link href="/dashboard/job-postings" className="text-blue-600 hover:text-blue-800">
+          ← Retour aux offres
+        </Link>
+      </div>
           <div className="mb-6">
             <Link href="/dashboard/job-postings" className="text-blue-600 hover:text-blue-800">
               ← Retour aux offres
@@ -176,7 +162,6 @@ export default function NewJobPostingPage() {
             </div>
           </form>
         </div>
-      </main>
-    </div>
+      </div>
   );
 }

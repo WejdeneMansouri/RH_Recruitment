@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 // Initialisation des données via Java plutôt que par script SQL
-@Component 
+@Component
 public class DataInitializer {
 
     @Autowired

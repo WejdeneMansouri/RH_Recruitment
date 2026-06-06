@@ -92,6 +92,42 @@ export default function CandidateProfilePage() {
     setResumeFile(null);
   };
 
+  const [editing, setEditing] = useState(false);
+  const [formValues, setFormValues] = useState<Partial<Candidate>>({});
+
+  useEffect(() => {
+    if (candidate) setFormValues(candidate);
+  }, [candidate]);
+
+  const handleChange = (field: keyof Candidate, value: any) => {
+    setFormValues(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage('');
+    if (!user?.candidateId) return setMessage('Utilisateur non authentifié.');
+
+    try {
+      const response = await fetch(`http://localhost:8082/api/candidates/${user.candidateId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formValues),
+      });
+      if (!response.ok) {
+        const txt = await response.text();
+        throw new Error(txt || 'Impossible de mettre à jour le profil.');
+      }
+      const updated = await response.json();
+      setCandidate(updated);
+      setEditing(false);
+      setMessage('Profil mis à jour.');
+    } catch (err: any) {
+      console.error(err);
+      setMessage(err?.message || 'Erreur lors de la mise à jour.');
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('recruitmentUser');
     router.push('/candidate/login');
@@ -171,6 +207,69 @@ export default function CandidateProfilePage() {
                   <p className="text-sm text-gray-600">Aucun CV téléchargé.</p>
                 )}
               </div>
+            </div>
+            <div className="rounded-3xl bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Modifier le profil</h2>
+                <button
+                  onClick={() => setEditing(!editing)}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  {editing ? 'Annuler' : 'Modifier le profil'}
+                </button>
+              </div>
+
+              {editing ? (
+                <form onSubmit={handleSave} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Nom</label>
+                    <input
+                      value={formValues.name ?? ''}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      className="mt-2 block w-full border border-gray-300 rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Téléphone</label>
+                    <input
+                      value={formValues.phone ?? ''}
+                      onChange={(e) => handleChange('phone', e.target.value)}
+                      className="mt-2 block w-full border border-gray-300 rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Adresse</label>
+                    <input
+                      value={formValues.address ?? ''}
+                      onChange={(e) => handleChange('address', e.target.value)}
+                      className="mt-2 block w-full border border-gray-300 rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Compétences (séparées par des virgules)</label>
+                    <input
+                      value={formValues.skills ?? ''}
+                      onChange={(e) => handleChange('skills', e.target.value)}
+                      className="mt-2 block w-full border border-gray-300 rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Années d'expérience</label>
+                    <input
+                      type="number"
+                      value={formValues.experienceYears ?? 0}
+                      onChange={(e) => handleChange('experienceYears', parseInt(e.target.value || '0'))}
+                      className="mt-2 block w-full border border-gray-300 rounded px-3 py-2"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="submit" className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700">Enregistrer</button>
+                    <button type="button" onClick={() => { setEditing(false); setFormValues(candidate || {}); }} className="rounded-md border px-4 py-2">Annuler</button>
+                  </div>
+                </form>
+              ) : (
+                <p className="text-sm text-gray-600">Cliquez sur « Modifier le profil » pour mettre à jour vos informations et compétences.</p>
+              )}
             </div>
 
             <div className="rounded-3xl bg-white p-6 shadow-sm">

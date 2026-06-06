@@ -22,37 +22,15 @@ export default function ReportsPage() {
 
   const fetchReportData = async () => {
     try {
-      // TODO: Implement reports API endpoint
-      // For now, using mock data
-      setReportData({
-        totalApplications: 156,
-        totalJobPostings: 12,
-        totalCandidates: 89,
-        applicationsByStatus: {
-          pending: 45,
-          in_review: 38,
-          interviewed: 23,
-          rejected: 35,
-          hired: 15
-        },
-        applicationsByMonth: [
-          { month: 'Jan', count: 12 },
-          { month: 'Fév', count: 18 },
-          { month: 'Mar', count: 25 },
-          { month: 'Avr', count: 22 },
-          { month: 'Mai', count: 28 },
-          { month: 'Jun', count: 31 }
-        ],
-        topSkills: [
-          { skill: 'React', count: 45 },
-          { skill: 'JavaScript', count: 38 },
-          { skill: 'Python', count: 32 },
-          { skill: 'Node.js', count: 28 },
-          { skill: 'TypeScript', count: 25 }
-        ]
-      });
+      const response = await fetch('http://localhost:8082/api/reports');
+      if (!response.ok) {
+        throw new Error(`Erreur ${response.status}`);
+      }
+      const data = await response.json();
+      setReportData(data);
     } catch (error) {
       console.error('Error fetching report data:', error);
+      setReportData(null);
     } finally {
       setLoading(false);
     }
@@ -75,26 +53,7 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/dashboard" className="text-xl font-bold text-gray-800">Recruitment Management</Link>
-            </div>
-            <div className="flex space-x-4">
-              <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 px-3 py-2">Dashboard</Link>
-              <Link href="/dashboard/job-postings" className="text-gray-700 hover:text-blue-600 px-3 py-2">Offres</Link>
-              <Link href="/dashboard/candidates" className="text-gray-700 hover:text-blue-600 px-3 py-2">Candidats</Link>
-              <Link href="/dashboard/applications" className="text-gray-700 hover:text-blue-600 px-3 py-2">Candidatures</Link>
-              <Link href="/dashboard/reports" className="text-blue-600 font-medium px-3 py-2">Rapports</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
+    <div className="px-4 py-6 sm:px-0">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Rapports et Analyses</h2>
 
           {/* KPIs principaux */}
@@ -226,7 +185,6 @@ export default function ReportsPage() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
   );
 }

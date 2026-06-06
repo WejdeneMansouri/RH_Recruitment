@@ -6,16 +6,13 @@ import com.example.recruitment.entity.JobPosting;
 import com.example.recruitment.repository.ApplicationRepository;
 import com.example.recruitment.repository.CandidateRepository;
 import com.example.recruitment.repository.JobPostingRepository;
+import com.example.recruitment.util.MatchScoreUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/applications")
@@ -69,7 +66,7 @@ public class ApplicationController {
         application.setCandidate(candidate);
         application.setJobPosting(jobPosting);
 
-        double matchScore = computeMatchScore(candidate.getSkills(), jobPosting.getRequirements());
+        double matchScore = MatchScoreUtil.computeMatchScore(candidate.getSkills(), jobPosting.getRequirements());
         application.setMatchScore(matchScore);
         application.setNotes("Score de correspondance: " + (int) Math.round(matchScore * 100) + "%");
 
@@ -87,13 +84,17 @@ public class ApplicationController {
         if (application != null) {
             String newStatus = applicationDetails.getStatus();
             // If admin sets status to 'interviewed', require an interview date
-            if (newStatus != null && newStatus.equalsIgnoreCase("interviewed") && applicationDetails.getInterviewDate() == null) {
-                return ResponseEntity.badRequest().body("La date d'entretien est requise lorsque le statut est 'interviewed'.");
+            if (newStatus != null && newStatus.equalsIgnoreCase("interviewed")
+                    && applicationDetails.getInterviewDate() == null) {
+                return ResponseEntity.badRequest()
+                        .body("La date d'entretien est requise lorsque le statut est 'interviewed'.");
             }
 
-            if (newStatus != null) application.setStatus(newStatus);
+            if (newStatus != null)
+                application.setStatus(newStatus);
             application.setNotes(applicationDetails.getNotes());
-            if (applicationDetails.getInterviewDate() != null) application.setInterviewDate(applicationDetails.getInterviewDate());
+            if (applicationDetails.getInterviewDate() != null)
+                application.setInterviewDate(applicationDetails.getInterviewDate());
             return ResponseEntity.ok(applicationRepository.save(application));
         }
         return ResponseEntity.notFound().build();
@@ -102,30 +103,5 @@ public class ApplicationController {
     @DeleteMapping("/{id}")
     public void deleteApplication(@PathVariable Long id) {
         applicationRepository.deleteById(id);
-    }
-
-    private double computeMatchScore(String skills, String requirements) {
-        if (skills == null || skills.isBlank() || requirements == null || requirements.isBlank()) {
-            return 0.0;
-        }
-
-        Set<String> candidateSkills = Arrays.stream(skills.split("[,;\\n]+"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(s -> s.toLowerCase(Locale.ROOT))
-                .collect(Collectors.toSet());
-
-        Set<String> requiredTerms = Arrays.stream(requirements.split("[,;\\n]+"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(s -> s.toLowerCase(Locale.ROOT))
-                .collect(Collectors.toSet());
-
-        if (requiredTerms.isEmpty()) {
-            return 0.0;
-        }
-
-        long matches = candidateSkills.stream().filter(requiredTerms::contains).count();
-        return Math.min(1.0, (double) matches / requiredTerms.size());
     }
 }
