@@ -58,20 +58,38 @@ export default function ApplicationsPage() {
 
   const updateApplicationStatus = async (id: number, newStatus: string) => {
     try {
+      const updateData: Record<string, string> = { status: newStatus };
+      
+      // If changing to 'interviewed', set interview date to today
+      if (newStatus === 'interviewed') {
+        updateData.interviewDate = new Date().toISOString();
+      }
+      
       const response = await fetch(`http://localhost:8082/api/applications/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify(updateData),
       });
 
       if (response.ok) {
+        const updatedApp = await response.json();
         setApplications(applications.map(app =>
-          app.id === id ? { ...app, status: newStatus } : app
+          app.id === id ? updatedApp : app
         ));
       } else {
-        console.error('Error updating application status');
+        // Handle both JSON and plain text error responses
+        const contentType = response.headers.get('content-type');
+        let errorMessage: string;
+        if (contentType?.includes('application/json')) {
+          const errorData = await response.json();
+          errorMessage = errorData.message || JSON.stringify(errorData);
+        } else {
+          errorMessage = await response.text();
+        }
+        console.error('Error updating application status:', errorMessage);
+        alert(`Erreur: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error updating application status:', error);

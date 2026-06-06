@@ -119,8 +119,8 @@ export default function JobPostingDetailPage() {
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">Compétences requises</h2>
               <div className="flex flex-wrap gap-2">
-                {job.requirements.split(',').map((req, idx) => (
-                  <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                {job.requirements.split(',').map((req) => (
+                  <span key={req.trim()} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
                     {req.trim()}
                   </span>
                 ))}
@@ -143,5 +143,6 @@ export default function JobPostingDetailPage() {
             )}
           </div>
         </div>
+      </div>
   );
 }

@@ -20,7 +20,6 @@ interface UserData {
 }
 
 export default function Dashboard() {
-  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
     totalJobPostings: 0,
     totalApplications: 0,
@@ -29,7 +28,6 @@ export default function Dashboard() {
     inReviewApplications: 0,
     hiredApplications: 0
   });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardStats();
@@ -61,8 +59,6 @@ export default function Dashboard() {
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
-    } finally {
-      setLoading(false);
     }
   };
   return (
@@ -187,7 +183,6 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
       </div>
   );
 }

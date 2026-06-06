@@ -1,6 +1,5 @@
 "use client";
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 interface ReportData {
@@ -185,6 +184,5 @@ export default function ReportsPage() {
             </div>
           </div>
         </div>
-      </div>
   );
 }

@@ -119,6 +119,5 @@ export default function JobPostingsPage() {
             </div>
           )}
         </div>
-      </div>
   );
 }
