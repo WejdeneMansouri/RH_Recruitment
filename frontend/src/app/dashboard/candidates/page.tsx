@@ -1,7 +1,6 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface Candidate {
@@ -14,35 +13,12 @@ interface Candidate {
   createdAt: string;
 }
 
-interface UserData {
-  userId: number;
-  email: string;
-  name: string;
-  role: string;
-}
-
 export default function CandidatesPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<UserData | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleLogout = () => {
-    localStorage.removeItem('recruitmentUser');
-    router.push('/auth');
-  };
-
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('recruitmentUser') : null;
-    if (stored) {
-      try {
-        const parsed: UserData = JSON.parse(stored);
-        setUser(parsed);
-      } catch (e) {
-        console.error('Error parsing user data');
-      }
-    }
     fetchCandidates();
   }, []);
 
@@ -123,7 +99,6 @@ export default function CandidatesPage() {
               </ul>
             </div>
           )}
-        </div>
-      </div>
+    </div>
   );
 }

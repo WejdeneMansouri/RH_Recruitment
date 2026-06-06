@@ -1,7 +1,6 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface DashboardStats {
@@ -22,7 +21,6 @@ interface UserData {
 
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<UserData | null>(null);
   const [stats, setStats] = useState<DashboardStats>({
     totalJobPostings: 0,
     totalApplications: 0,
@@ -33,32 +31,9 @@ export default function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem('recruitmentUser');
-    router.push('/auth');
-  };
-
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('recruitmentUser') : null;
-    
-    if (!stored) {
-      router.push('/admin/login');
-      return;
-    }
-
-    try {
-      const parsed: UserData = JSON.parse(stored);
-      if (parsed.role === 'Candidate') {
-        router.push('/candidate/dashboard');
-        return;
-      }
-      setUser(parsed);
-    } catch (e) {
-      router.push('/admin/login');
-    }
-
     fetchDashboardStats();
-  }, [router]);
+  }, []);
 
   const fetchDashboardStats = async () => {
     try {

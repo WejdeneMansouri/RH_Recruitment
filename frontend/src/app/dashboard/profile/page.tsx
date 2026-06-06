@@ -20,7 +20,7 @@ export default function AdminProfilePage() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('recruitmentUser') : null;
+    const stored = globalThis.window ? localStorage.getItem('recruitmentUser') : null;
     if (!stored) {
       router.push('/admin/login');
       return;
@@ -35,7 +35,7 @@ export default function AdminProfilePage() {
       setAdmin(parsed);
       setName(parsed.name || '');
       setEmail(parsed.email || '');
-    } catch (e) {
+    } catch {
       router.push('/admin/login');
     }
   }, [router]);
@@ -63,24 +63,27 @@ export default function AdminProfilePage() {
       <div className="bg-white rounded-lg p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Nom</label>
+            <label htmlFor="admin-name" className="block text-sm font-medium text-gray-700">Nom</label>
             <input
+              id="admin-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="admin-email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
+              id="admin-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
+            <label htmlFor="admin-password" className="block text-sm font-medium text-gray-700">Mot de passe</label>
             <input
+              id="admin-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

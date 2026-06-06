@@ -38,7 +38,7 @@ export default function EditJobPostingPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError('');
     try {
@@ -75,24 +75,24 @@ export default function EditJobPostingPage() {
       {error && <div className="mb-4 text-red-600">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Titre</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} required className="mt-1 block w-full rounded border-gray-300" />
+            <label htmlFor="job-title" className="block text-sm font-medium text-gray-700">Titre</label>
+            <input id="job-title" value={title} onChange={(e) => setTitle(e.target.value)} required className="mt-1 block w-full rounded border-gray-300" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Description</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} required className="mt-1 block w-full rounded border-gray-300" />
+            <label htmlFor="job-description" className="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="job-description" value={description} onChange={(e) => setDescription(e.target.value)} rows={6} required className="mt-1 block w-full rounded border-gray-300" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Compétences requises (séparées par des virgules)</label>
-            <input value={requirements} onChange={(e) => setRequirements(e.target.value)} className="mt-1 block w-full rounded border-gray-300" />
+            <label htmlFor="job-requirements" className="block text-sm font-medium text-gray-700">Compétences requises (séparées par des virgules)</label>
+            <input id="job-requirements" value={requirements} onChange={(e) => setRequirements(e.target.value)} className="mt-1 block w-full rounded border-gray-300" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Date limite</label>
-            <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="mt-1 block w-full rounded border-gray-300" />
+            <label htmlFor="job-deadline" className="block text-sm font-medium text-gray-700">Date limite</label>
+            <input id="job-deadline" type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="mt-1 block w-full rounded border-gray-300" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Statut</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value)} className="mt-1 block w-full rounded border-gray-300">
+            <label htmlFor="job-status" className="block text-sm font-medium text-gray-700">Statut</label>
+            <select id="job-status" value={status} onChange={(e) => setStatus(e.target.value)} className="mt-1 block w-full rounded border-gray-300">
               <option value="Open">Open</option>
               <option value="Closed">Closed</option>
             </select>

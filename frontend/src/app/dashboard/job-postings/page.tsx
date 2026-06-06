@@ -1,7 +1,6 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface JobPosting {
@@ -22,26 +21,10 @@ interface UserData {
 }
 
 export default function JobPostingsPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<UserData | null>(null);
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem('recruitmentUser');
-    router.push('/auth');
-  };
-
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('recruitmentUser') : null;
-    if (stored) {
-      try {
-        const parsed: UserData = JSON.parse(stored);
-        setUser(parsed);
-      } catch (e) {
-        console.error('Error parsing user data');
-      }
-    }
     fetchJobPostings();
   }, []);
 

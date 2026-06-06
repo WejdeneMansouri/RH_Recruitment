@@ -1,7 +1,6 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface Application {
@@ -18,13 +17,6 @@ interface Application {
   status: string;
   appliedDate: string;
   matchScore?: number;
-}
-
-interface UserData {
-  userId: number;
-  email: string;
-  name: string;
-  role: string;
 }
 
 const statusColors = {
@@ -44,27 +36,11 @@ const statusLabels = {
 };
 
 export default function ApplicationsPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<UserData | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('');
 
-  const handleLogout = () => {
-    localStorage.removeItem('recruitmentUser');
-    router.push('/auth');
-  };
-
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('recruitmentUser') : null;
-    if (stored) {
-      try {
-        const parsed: UserData = JSON.parse(stored);
-        setUser(parsed);
-      } catch (e) {
-        console.error('Error parsing user data');
-      }
-    }
     fetchApplications();
   }, []);
 
@@ -193,7 +169,6 @@ export default function ApplicationsPage() {
               </ul>
             </div>
           )}
-        </div>
-      </div>
+    </div>
   );
 }
